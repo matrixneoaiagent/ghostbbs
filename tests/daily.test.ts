@@ -19,6 +19,7 @@ import {
   utcDateString,
   hash32,
   mulberry32,
+  hasWinningLine,
 } from '../src/game/daily.js';
 import type { Level } from '../src/game/types.js';
 
@@ -260,6 +261,42 @@ describe('Opening move is survivable (regression)', () => {
         expect(distance).toBeGreaterThan(1);
       }
     }
+  });
+});
+
+describe('Daily level is survivable, not just solvable (regression)', () => {
+  it('every generated level has a winning line that survives the patrols', () => {
+    for (let day = 0; day < 45; day++) {
+      const date = new Date(Date.UTC(2026, 10, 1 + day));
+      expect(hasWinningLine(generateLevel(date))).toBe(true);
+    }
+  });
+
+  it('rejects a level whose patrol camps the hatch', () => {
+    // 2026-11-18 shipped without the survivability guard: a patrol sat on the
+    // hatch corner, so collecting the last fragment was always fatal.
+    const grid = Array.from({ length: 7 }, () =>
+      Array.from<'floor' | 'wall' | 'fragment' | 'hatch'>({ length: 7 }).fill('floor')
+    );
+    grid[0][2] = 'fragment';
+    grid[2][0] = 'fragment';
+    grid[4][4] = 'fragment';
+    grid[6][6] = 'hatch';
+    const trapped = {
+      grid: grid as Level['grid'],
+      playerStart: { row: 0, col: 0 },
+      fragmentCells: [
+        { row: 0, col: 2 },
+        { row: 2, col: 0 },
+        { row: 4, col: 4 },
+      ],
+      hatchCell: { row: 6, col: 6 },
+      spectreRoutes: [
+        [{ row: 6, col: 5 }, { row: 6, col: 6 }],
+      ],
+    };
+    expect(hasWinningLine(trapped)).toBe(false);
+    expect(hasWinningLine(FALLBACK_LEVEL)).toBe(true);
   });
 });
 

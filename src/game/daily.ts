@@ -1,6 +1,18 @@
-import type { Cell, Grid, Level, SpectreRoute, Tile } from './types.js';
+import type {
+  Cell,
+  GameState,
+  Grid,
+  Level,
+  MoveDirection,
+  SpectreRoute,
+  Tile,
+} from './types.js';
+import { applyMove, initGameState } from './engine.js';
 
 const GRID_SIZE = 7;
+
+/** Turn budget for one run, mirrored from the engine's timeout rule. */
+const MAX_TURNS = 30;
 
 // --- Date helpers ---
 
@@ -308,9 +320,48 @@ export function generateLevel(date: Date): Level {
     );
     if (par === -1) continue;
 
+    // BFS par ignores the spectres. A level can be "solvable" on paper while a
+    // patrol route camps on the hatch or on a fragment, which makes every route
+    // to it fatal. Require a line that survives the patrols, not just a path.
+    if (!hasWinningLine(candidate)) continue;
+
     return { ...candidate, par };
   }
 
   // Nothing safe and solvable: use the hand-verified fallback.
   return FALLBACK_LEVEL;
+}
+
+/**
+ * True when at least one move sequence reaches the hatch with all fragments and
+ * never ends a turn within Chebyshev distance 1 of a spectre. Mirrors the real
+ * turn resolution by replaying `applyMove` over the (cell, fragments, patrol
+ * phase) state space; patrol phases are bounded by route lengths, so the search
+ * is finite even though the turn budget is 30.
+ */
+export function hasWinningLine(level: Omit<Level, 'par'>): boolean {
+  const probe: Level = { ...level, par: 0 };
+  const start = initGameState(probe);
+  const stateKey = (s: GameState): string =>
+    `${s.playerPos.row},${s.playerPos.col},${s.collectedFragments},${s.spectreIndices.join('-')}`;
+  const seen = new Set<string>([stateKey(start)]);
+  const directions: MoveDirection[] = ['up', 'down', 'left', 'right'];
+
+  let frontier: GameState[] = [start];
+  for (let turn = 0; turn < MAX_TURNS && frontier.length > 0; turn++) {
+    const next: GameState[] = [];
+    for (const state of frontier) {
+      for (const dir of directions) {
+        const moved = applyMove(state, dir);
+        if (moved.outcome === 'success') return true;
+        if (moved.outcome !== 'playing') continue;
+        const key = stateKey(moved);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        next.push(moved);
+      }
+    }
+    frontier = next;
+  }
+  return false;
 }

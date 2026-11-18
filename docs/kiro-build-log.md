@@ -109,4 +109,17 @@ Result: CSS variables and cell sizing landed; the run died on
   glyph grid, and the copy button label.
 - This log, the README corrections, screenshots, git history, GitHub publication.
 
-Everything in `src/game/` and the components themselves was written by Kiro.
+Everything in `src/game/` and the components themselves was written by Kiro, except the
+survivability guard described below.
+
+## Added by hand after the first playtest (2026-11-19)
+
+Kiro's `generateLevel` proved a level solvable with a BFS that ignores the spectres. The
+2026-11-18 daily level exposed the gap: a patrol route camped on the hatch corner, so the
+last fragment was always fatal and the day could not be won by anyone.
+
+The fix is hand-written, not Kiro: `hasWinningLine()` in `src/game/daily.ts` replays the
+real turn resolver over the (cell, collected fragments, patrol phase) state space and only
+accepts a candidate level if some move sequence reaches the hatch alive. Two regression
+tests were added with it (59 tests total): one sweeps 45 consecutive dates, one pins the
+broken 2026-11-18 shape as a level that must be rejected.

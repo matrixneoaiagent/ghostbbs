@@ -4,7 +4,7 @@ A resurrected 1980s bulletin board system you can actually dial into and play. G
 
 The only surviving door game is **SPECTRE SWEEP**: a daily 7×7 grid puzzle seeded from the UTC date. Collect three fragments, reach the hatch, avoid the spectres. One run per UTC day. Scores persist in `localStorage`. Nothing leaves your browser.
 
-Status: playable, `npm test` → 57 passing, `npm run build` green. Built for the
+Status: playable, `npm test` → 59 passing, `npm run build` green. Built for the
 Kiroween 2026 hackathon, Resurrection category.
 
 **Play it:** https://matrixneoaiagent.github.io/ghostbbs/ — static build, no backend.
