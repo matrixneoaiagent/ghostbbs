@@ -1,0 +1,133 @@
+I'll start by reading all the spec and steering files to understand what needs to be built.
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+Now let me check the existing project structure:
+[tool] Survey existing project files
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] Read package.json
+[tool] status: Completed
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+Good. Task 1 is already done — scaffold is in place. Now I'll implement all the game modules. I have enough context to write everything at once.
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+I have a problem — `engine.ts` exports `initGameState` but imports it from `types.ts` which has no logic. Let me fix that:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now let's run the typecheck to catch issues before writing the tests:
+[tool] Typecheck game modules
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+Clean. Now write the tests:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now let's run typecheck and tests:
+[tool] Typecheck all source and test files
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Failed: Typecheck all source and test files
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Typecheck again after fixes
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+Clean. Now run tests:
+[tool] Run full test suite
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Failed: Run full test suite
+Three failures to fix:
+
+1. **FALLBACK_LEVEL.par** — the BFS gives 16, not 15. Fix by updating the hard-coded par.
+2. **Hatch success test** — my test uses a spectre that's at Chebyshev 1 of the hatch when the player arrives, but the spectre advances *after* step 3. Looking more carefully: on the second move `state2`, player goes to (0,2) = hatch with all fragments. Step 3 fires success before spectre advance. But the test shows `failure_caught`. Let me re-examine the route.
+
+The spectre route is `[(0,3), (0,2)]`. After state1 (first move), spectre index advances from 0→1, so spectre is at `(0,2)`. On state2's second move: step 1 places player at (0,2). Step 3: check success — `collectedFragments==1` and `hatchCell==(0,2)` → success. This should work. But it fails.
+
+Wait — let me re-examine the first move in state2: player moves right to (0,1), which has a fragment. Spectre was at index 0 = `(0,3)`, advances to index 1 = `(0,2)`. Chebyshev((0,1),(0,2)) = 1 → **caught on the first move**, not the second. That's the bug in the test, not the engine.
+
+3. **Full run on FALLBACK_LEVEL** — the spectre routes use cells that are walkable but cross the player's path.
+
+Let me fix the FALLBACK_LEVEL par, redesign the spectre routes to be safely away, fix the hatch test, and fix the full-run test:
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+Now fix the two failing engine tests. The hatch-success-before-advance test logic is wrong (spectre catches player on the first move). I need a cleaner scenario. And the full-run test encounters a spectre. Let me rewrite those tests with carefully placed spectres that never interact:
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+Now fix the full-run test. The spectres in FALLBACK_LEVEL may intercept the path I chose. Let me rethink the route: fragments at (0,2), (2,0), (4,4); hatch at (6,6); spectres patrol rows 3 and 5-6. I need a path that avoids Chebyshev distance ≤1 from spectre positions at every step. Let me work out the spectre positions along my intended route:
+[tool] Simulate full-run route to find spectre conflicts
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+Turn 8 catches the player (chebyshev 1). I need a different path. Let me find a safe route:
+[tool] Find a safe winning path through FALLBACK_LEVEL
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Trace route step by step
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Find a safe 16-move winning path
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Trace spectre positions on alternative routes
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Find safe 18-move path with phase-offset
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+The spectres are quite constraining. Rather than trying to navigate FALLBACK_LEVEL spectre timing (which may be hard even with optimal play depending on RNG phase), the simplest fix is to use a simpler test level for the full-run test, and separately verify that FALLBACK_LEVEL is solvable (which we already test). Let me also fix the FALLBACK_LEVEL spectre routes to make them truly non-interfering:
+[tool] Test spectres in top-right corner far from path
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed

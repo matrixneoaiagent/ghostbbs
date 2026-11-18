@@ -1,0 +1,36 @@
+[tool] Sub-agent: feature-requirements-first-workflow
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+`tasks.md` is written and validates cleanly. Here's what was produced:
+
+**22 tasks across 20 dependency waves**, strictly ordered engine-first then UI:
+
+| Wave | Tasks |
+|---|---|
+| 0 | Scaffold (vite config, tsconfig, package.json, index.html) |
+| 1–2 | `types.ts` → `storage.ts` |
+| 3 | `storage.test.ts` (round-trip, one-run-per-day, leaderboard size/sort, safe defaults) |
+| 4–5 | `daily.ts` placement → `daily.ts` BFS + fallback |
+| 6 | `daily.test.ts` (determinism, 30-date solvability, par bounds, null date throws) |
+| 7–8 | `engine.ts` applyMove (8-step resolution) → `engine.ts` scoring + share text |
+| 9 | `engine.test.ts` (move bounds, caught, scoring, share text, turn order) |
+| 10 | Checkpoint: `npm test && npx tsc --noEmit` |
+| 11–17 | `styles.css` → App scaffold → Boot → Login → Menu → DoorGame+Board → ResultCard |
+| 18 | Leaderboard display (ResultCard + Menu) |
+| 19 | Checkpoint: `npm run build && npm test` |
+| 20–21 | README + `docs/screenshots/.gitkeep` |
+
+Each task has explicit file paths, requirement IDs for traceability, and a concrete verification command. Test tasks are marked optional (`*`) for a fast MVP pass. The two checkpoint tasks (11 and 20) gate the UI layer and final release.

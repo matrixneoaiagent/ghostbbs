@@ -1,0 +1,40 @@
+2026-11-18T21:28:47.849Z  PostFileSave  src/game/types.ts  ->  tsc clean
+2026-11-18T21:28:58.080Z  PostFileSave  src/game/storage.ts  ->  tsc clean
+2026-11-18T21:29:22.746Z  PostFileSave  src/game/daily.ts  ->  tsc clean
+2026-11-18T21:34:41.219Z  PostFileSave  src/game/engine.ts  ->  tsc FAILED: src/game/engine.ts(8,10): error TS2724: '"./types.js"' has no exported member named 'initGameState'. Did you mean 'GameState'?
+2026-11-18T21:34:52.225Z  PostFileSave  src/game/engine.ts  ->  tsc clean
+2026-11-18T21:35:17.938Z  PostFileSave  tests/storage.test.ts  ->  tsc FAILED: tests/storage.test.ts(14,55): error TS6133: 'vi' is declared but its value is never read.
+2026-11-18T21:35:41.781Z  PostFileSave  tests/daily.test.ts  ->  tsc FAILED: tests/storage.test.ts(14,55): error TS6133: 'vi' is declared but its value is never read.
+2026-11-18T21:36:38.699Z  PostFileSave  tests/engine.test.ts  ->  tsc FAILED: tests/engine.test.ts(30,15): error TS6196: 'Cell' is declared but never used.
+2026-11-18T21:36:47.478Z  PostFileSave  tests/engine.test.ts  ->  tsc FAILED: tests/engine.test.ts(64,10): error TS6133: 'addDays' is declared but its value is never read.
+2026-11-18T21:36:51.691Z  PostFileSave  tests/engine.test.ts  ->  tsc FAILED: tests/storage.test.ts(14,55): error TS6133: 'vi' is declared but its value is never read.
+2026-11-18T21:36:56.108Z  PostFileSave  tests/storage.test.ts  ->  tsc clean
+2026-11-18T21:37:17.746Z  PostFileSave  src/game/daily.ts  ->  tsc clean
+2026-11-18T21:37:37.054Z  PostFileSave  tests/engine.test.ts  ->  tsc clean
+2026-11-18T21:44:19.498Z  PostFileSave  src/game/daily.ts  ->  tsc clean
+2026-11-18T21:44:28.710Z  PostFileSave  tests/engine.test.ts  ->  tsc clean
+2026-11-18T21:44:39.477Z  PostFileSave  tests/engine.test.ts  ->  tsc clean
+2026-11-18T21:44:56.450Z  PostFileSave  src/game/engine.ts  ->  tsc clean
+2026-11-18T21:45:01.451Z  PostFileSave  tests/engine.test.ts  ->  tsc clean
+2026-11-18T21:45:35.051Z  PostFileSave  src/main.tsx  ->  tsc FAILED: src/main.tsx(3,17): error TS2307: Cannot find module './ui/App.js' or its corresponding type declarations.
+2026-11-18T21:45:45.987Z  PostFileSave  src/ui/App.tsx  ->  tsc FAILED: src/ui/App.tsx(5,18): error TS2307: Cannot find module './Boot.js' or its corresponding type declarations.
+2026-11-18T21:45:55.706Z  PostFileSave  src/ui/Boot.tsx  ->  tsc FAILED: src/ui/App.tsx(6,19): error TS2307: Cannot find module './Login.js' or its corresponding type declarations.
+2026-11-18T21:46:04.418Z  PostFileSave  src/ui/Login.tsx  ->  tsc FAILED: src/ui/App.tsx(7,18): error TS2307: Cannot find module './Menu.js' or its corresponding type declarations.
+2026-11-18T21:46:27.778Z  PostFileSave  src/ui/Menu.tsx  ->  tsc FAILED: src/ui/App.tsx(8,22): error TS2307: Cannot find module './DoorGame.js' or its corresponding type declarations.
+2026-11-18T21:46:39.627Z  PostFileSave  src/ui/Board.tsx  ->  tsc FAILED: src/ui/App.tsx(8,22): error TS2307: Cannot find module './DoorGame.js' or its corresponding type declarations.
+2026-11-18T21:46:53.143Z  PostFileSave  src/ui/DoorGame.tsx  ->  tsc FAILED: src/ui/App.tsx(9,24): error TS2307: Cannot find module './ResultCard.js' or its corresponding type declarations.
+2026-11-18T21:47:05.788Z  PostFileSave  src/ui/ResultCard.tsx  ->  tsc FAILED: src/ui/DoorGame.tsx(16,21): error TS6133: 'setGameState' is declared but its value is never read.
+2026-11-18T22:02:41.394Z  PostFileSave  src/ui/DoorGame.tsx  ->  tsc FAILED: src/ui/ResultCard.tsx(3,25): error TS6133: 'utcDateString' is declared but its value is never read.
+2026-11-18T22:02:47.435Z  PostFileSave  src/ui/ResultCard.tsx  ->  tsc clean
+2026-11-18T22:13:19.811Z  PostFileSave  src/ui/App.tsx  ->  tsc clean
+2026-11-18T22:13:31.949Z  PostFileSave  src/ui/Boot.tsx  ->  tsc clean
+2026-11-18T22:13:55.526Z  PostFileSave  src/ui/Menu.tsx  ->  tsc clean
+2026-11-18T22:14:14.097Z  PostFileSave  src/ui/Board.tsx  ->  tsc FAILED: src/ui/Board.tsx(31,9): error TS6133: 'ROWS' is declared but its value is never read.
+2026-11-18T22:14:31.046Z  PostFileSave  src/ui/ResultCard.tsx  ->  tsc FAILED: src/ui/Board.tsx(31,9): error TS6133: 'ROWS' is declared but its value is never read.
+2026-11-18T22:14:41.743Z  PostFileSave  src/ui/Login.tsx  ->  tsc FAILED: src/ui/Board.tsx(31,9): error TS6133: 'ROWS' is declared but its value is never read.
+2026-11-18T22:14:50.512Z  PostFileSave  src/ui/DoorGame.tsx  ->  tsc FAILED: src/ui/Board.tsx(31,9): error TS6133: 'ROWS' is declared but its value is never read.
+2026-11-18T22:15:15.763Z  PostFileSave  src/ui/Board.tsx  ->  tsc clean
+2026-11-18T22:18:13.005Z  PostFileSave  src/ui/Boot.tsx  ->  tsc clean
+2026-11-18T22:18:19.724Z  PostFileSave  src/ui/Menu.tsx  ->  tsc clean
+2026-11-18T22:24:27.149Z  PostFileSave  src/ui/Board.tsx  ->  tsc FAILED: src/ui/Board.tsx(72,9): error TS6133: 'isOver' is declared but its value is never read.
+2026-11-18T22:24:38.384Z  PostFileSave  src/ui/Board.tsx  ->  tsc clean

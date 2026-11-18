@@ -1,0 +1,30 @@
+Let me read the current CSS and relevant components before touching anything.
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+I have everything I need. Three targeted problems, three CSS changes plus a tiny Board JSX change. I'll work through each precisely:
+
+**Problem analysis before writing:**
+- Board: `--grid-fs: 14px`, `--cell-ch: 2ch`, `.door-game-wrap { align-items: flex-start }`. Need `--grid-fs: clamp(16px, 5.5vw, 24px)`, `--cell-ch: 3ch`, `align-items: center`, HUD width to match (stretch or `width: fit-content` already correct), frame dash count must stay `COLS * 2` matching 2ch cells — no JSX change needed there since the CSS drives cell width. However the frame bar string in Board JSX hardcodes `COLS * 2` dashes which assumes 2ch. At 3ch per cell the bar will be too short. Need `COLS * 3` dashes, or better: a CSS-only approach. Since `─` is a monospace char at 1ch, the bar needs `COLS * 3` dashes. That's a one-line Board JSX change.
+- Share text: change `font-size: 1.3em` → `font-size: 12px`, `line-height: 1.0` → `line-height: 1.3`, make `display: inline-block` (not block), keep `white-space: pre`, bordered panel already there.
+- Menu: add `align-items: center` to `.menu-screen` so the wordmark+box column centres horizontally.
+
+Let me verify the frame math first:
+[tool] Verify frame geometry at 3ch cells
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+Now make the CSS changes — all in `styles.css`:
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+Error: You've reached your monthly usage limit. Please return next month to continue building. (Request ID: 9250ab24-adea-4574-8eca-ae968f9fc448) (code -32000): {"errorType":"UsageLimitReachedError","retryErrorType":"CLIENT_ERROR","requestId":"9250ab24-adea-4574-8eca-ae968f9fc448","actions":["upgradePlan"]}

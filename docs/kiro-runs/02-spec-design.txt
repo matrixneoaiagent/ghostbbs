@@ -1,0 +1,45 @@
+[tool] Sub-agent: feature-requirements-first-workflow
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] List Directory
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Prework
+[tool] status: Completed
+[tool] status: InProgress
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+`design.md` is written and validates without issues. Here's a summary of what's covered:
+
+**Architecture** — the two-layer split is explicit: `src/game/` is a DOM-free island; `src/ui/` only renders and dispatches. The dependency rule is stated as a hard constraint.
+
+**Types (`types.ts`)** — concrete TypeScript interfaces for every shared shape: `Cell`, `Tile`, `Grid`, `SpectreRoute`, `Level`, `GameState`, `StoredRun`, `LeaderboardEntry`, `MoveDirection`.
+
+**Level generation** — six steps: seed derivation with the exact `mulberry32` implementation, wall placement, Fisher-Yates fragment/hatch placement, spectre patrol generation, BFS over the `(cell, fragmentMask)` collection graph, and fallback substitution.
+
+**Turn resolution** — eight-step sequence matching Requirement 4.13 exactly, including the note that hatch success fires before spectre advance (a player stepping onto the hatch wins even if a spectre would land on the same cell).
+
+**Scoring** — `max(0, par×10 − (turns−par)×2) + 50 + 30` with a worked example table.
+
+**Share text** — `░`/`▓`/`█` glyph mapping, 7×7 replay-simulation algorithm.
+
+**Storage schema** — exact key strings and JSON shapes for all three keys; eviction tie-breaking rule.
+
+**UI state machine** — `Screen` enum, initial-screen logic, full transition table.
+
+**Correctness properties** — 15 universally-quantified properties bridging requirements to tests.
+
+**Test plan** — three files (`daily.test.ts`, `engine.test.ts`, `storage.test.ts`), each with a table mapping test name → type → requirement numbers, covering all of Requirements 15.1–15.7. fast-check at ≥100 iterations per property.
+
+Ready to generate `tasks.md` whenever you say the word.

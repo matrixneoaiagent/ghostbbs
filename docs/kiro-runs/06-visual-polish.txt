@@ -1,0 +1,113 @@
+Let me read all the current UI files before touching anything.
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+Good. I have a complete picture of all six problems and their structural causes. Now I'll rewrite all five affected files in one pass: the stylesheet (biggest change), App.tsx (add terminal chrome wrapper with header/footer), Boot.tsx (wordmark), Menu.tsx (wordmark + framing), Board.tsx (sized cells + ASCII grid frame + HUD), and ResultCard.tsx (BBS goodbye style). DoorGame and Login get minor changes only.
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now rewrite `App.tsx` to wrap everything in the terminal panel with header and footer:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now rewrite `Boot.tsx` with the compact wordmark:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now rewrite `Menu.tsx` with the wordmark and proper menu box framing:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now rewrite `Board.tsx` with 2ch cells, ASCII frame around the grid, and the bordered HUD bar:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now rewrite `ResultCard.tsx` as a BBS goodbye screen:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now update `Login.tsx` to remove the old `screen-header` div (it's now in App's header bar) and use the new CSS class names:
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+Now remove the old `screen-header` div from `DoorGame.tsx` (the breadcrumb is in the App header bar now) and add a minor spacing tweak:
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+Now remove the unused `utcDateString` import from DoorGame (it's still used for the run object, so keep it — let me check):
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+Good — `utcDateString` is still used for the run object. Now run typecheck:
+[tool] Typecheck all UI and game files
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Failed: Typecheck all UI and game files
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Typecheck again
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+Clean. Run tests and build:
+[tool] Full test suite and production build
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+56/56 tests, build clean. Now add the screenshot checklist note under task 20 in tasks.md:
+[tool] Replace in File
+[tool] status: Pending
+[tool] status: Completed
+Done. Here's what changed and why each decision was made.
+
+---
+
+## Changes made
+
+**`styles.css`** — complete rewrite
+
+The old file used `.crt-bezel` as a full-height strip with no visible boundary, so it looked like unstyled text on a black page. The new structure is:
+
+- `.terminal-panel` replaces `.crt-bezel`. It is `min(80ch, 100%)`, centred by `html/body { display: flex; justify-content: center }`, and given a phosphor-green border (`#2a6a2a`) plus an `inset box-shadow` glow. The flicker animation and scanline overlay are preserved under `prefers-reduced-motion: no-preference`.
+- `.term-header` and `.term-footer` are fixed-height bars (`2.2em` / `1.9em`) with `background: var(--color-dim)` and `border-bottom/top: 1px solid var(--color-border)`, creating the classic terminal chrome.
+- `.term-body` is the flex-grow content region between them.
+- Board cells: `.grid-cell` is `display: inline-block; width: var(--cell-size)` (default `2ch`). `.grid-pre` sets `font-size: 14px; line-height: 1.6`, giving approximately 22 px cell height on desktop. The old `letter-spacing: 0.1em` was making cells irregular widths — removed.
+- `.hud-bar` is a bordered strip attached to the grid top (no bottom border so it visually connects to the grid frame).
+- `.grid-frame` wraps the `<pre>` with a border and slight padding.
+- Tile colours: walls `--color-chrome` (dim grey), floor `--color-dim` (very dark green), fragment/spectre `--color-warning` (amber), hatch `#00ddcc` (cyan), player `--color-fg` (bright phosphor green).
+- Result card `.result-banner` is a bordered block with green/amber colour-coding that looks like a BBS status box.
+- Responsive: at 640 px the side borders and glow drop (the panel spans full width). At 380 px font scales to 10 px and footer hints hide.
+
+**`App.tsx`** — added `term-header` / `term-body` / `term-footer` structure, breadcrumb map, and `nowUtc()` footer date. Removed the old `.crt-bezel` class.
+
+**`Boot.tsx`** — added 6-row block-character wordmark (36 cols wide, renders in `<pre class="wordmark">`). Modem lines now live under `.boot-modem`.
+
+**`Menu.tsx`** — same wordmark above the menu. Options are wrapped in `.menu-box` with a `.menu-box-title` label, giving a visible ASCII-bordered panel.
+
+**`Board.tsx`** — `ROWS` variable removed (unused), `COLS` kept for the frame width calculation. Each cell is a `<span class="grid-cell t-*">` (2ch wide). ASCII frame drawn in JSX using `┌─┐ │ │ └─┘` box characters. Collected fragments revert to floor glyph. HUD bar outputs `TURN 08/30  —  FRAGMENTS N LEFT` with the new `.hud-bar` classes. Legend uses `.grid-hint` with the new `.t-*` class names.
+
+**`ResultCard.tsx`** — outcome banner, left-bordered stats block, bordered share text `<pre>`, "NO CARRIER" goodbye line at the bottom.
+
+**`Login.tsx`** — replaced the old `.screen-header` with a `.section-header` breadcrumb; removed `role="main"` (now on the App wrapper).

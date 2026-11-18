@@ -1,0 +1,94 @@
+[tool] **Based on your description, this sounds like a new feature. Is this a new feature or a bugfix?**
+[question] the agent asked: **Based on your description, this sounds like a new feature. Is this a new feature or a bugfix?** [options: Build a Feature | Fix a Bug | Quick Spec] — questions cannot be answered in non-interactive mode, so it continues without an answer.
+[tool] status: Failed: **Based on your description, this sounds like a new feature. Is this a new feature or a bugfix?**
+[tool] **What do you want to start with?**
+[question] the agent asked: **What do you want to start with?** [options: Requirements | Technical Design] — questions cannot be answered in non-interactive mode, so it continues without an answer.
+[tool] status: Failed: **What do you want to start with?**
+[tool] Sub-agent: feature-requirements-first-workflow
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Create spec directory
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] Write File
+[tool] status: Pending
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] status: Completed
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] status: Completed
+Now running the automatic requirements detailing pass on each requirement in parallel.
+[tool] Sub-agent: requirement-detailer
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Sub-agent: requirement-detailer
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Sub-agent: requirement-detailer
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Sub-agent: requirement-detailer
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Sub-agent: requirement-detailer
+[tool] status: InProgress
+[tool] Read File
+[tool] status: InProgress
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Failed: Read File
+[tool] status: Completed
+[tool] status: Completed
+[tool] Sub-agent: requirement-detailer
+[tool] status: InProgress
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Sub-agent: requirement-detailer
+[tool] status: InProgress
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] status: InProgress
+[tool] status: Completed
+All detailing is complete. Now I'll update `requirements.md` with all the refined criteria.
+[tool] Read File
+[tool] status: InProgress
+[tool] status: Completed
+[tool] Write fully detailed requirements.md with all 15 refined requirements
+[tool] status: InProgress
+[tool] status: InProgress
+[tool] status: Completed
+[tool] status: Completed
+`requirements.md` is written and validates cleanly. Here's what was produced:
+
+**15 requirements** covering the full scope, each with EARS-style acceptance criteria refined to be unambiguously testable:
+
+| # | Requirement | Key additions from detailing |
+|---|---|---|
+| 1 | Boot Sequence & Handle Entry | Handle length bounded 1–20 chars; inline error messages specified |
+| 2 | Main Menu Navigation | Case-insensitive key presses; door button shows "run complete" state |
+| 3 | Deterministic Level Generation | Exact seed derivation steps; null Date throws; Fallback_Level also gets BFS Par |
+| 4 | SPECTRE SWEEP Gameplay | Turn_Limit fixed at 30; Wall defined in glossary; exact turn-resolution order specified |
+| 5 | Scoring & Silent Run Bonus | Concrete formula: `max(0, Par×10 − (Turns−Par)×2)` + 50 par bonus + 30 silent bonus |
+| 6 | One Run Per UTC Day | Exact storage key format `ghostbbs:v1:run:<date>:<handle>`; concrete stored fields |
+| 7 | Result Card & Share Text | 7×7 glyph encoding defined; clipboard fallback as `<textarea>`; copy confirmation ≥1500 ms |
+| 8 | Local Leaderboard | Tie-breaking on eviction (earlier date removed); duplicate-entry update rule |
+| 9 | Static Message Board | Scroll keys named: Up/Down arrows and Page Up/Down |
+| 10 | CRT Visual Presentation | "Usable at 360 px" defined concretely (no overflow clipping, all elements reachable) |
+| 11 | Accessibility | D-pad buttons need direction accessible names; `aria-live="polite"`; arrow key scroll suppressed during gameplay |
+| 12 | No Network | System fonts clarified (no font files bundled) |
+| 13 | Pure Engine | Referential transparency stated explicitly; no module-level mutable globals |
+| 14 | Storage Safety | Null/empty defaults specified per typed read function |
+| 15 | Test Coverage | Caught condition test covers both trigger paths (distance ≤ 1 and spectre-steps-onto-player) |
+
+You can proceed to generate a technical design or jump straight to the task list whenever you're ready.

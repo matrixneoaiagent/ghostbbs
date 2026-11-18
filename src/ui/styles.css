@@ -1,0 +1,646 @@
+/* ============================================================
+   GHOSTBBS — single stylesheet
+   ============================================================ */
+
+:root {
+  --color-fg:        #33ff33;
+  --color-bg:        #0a0a0a;
+  --color-panel:     #0d0d0d;
+  --color-border:    #2a6a2a;
+  --color-warning:   #ffb000;
+  --color-chrome:    #4a7a4a;
+  --color-chrome-lo: #2a4a2a;
+  --color-dim:       #1c3a1c;
+  --color-glow:      rgba(51, 255, 51, 0.06);
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas,
+               "DejaVu Sans Mono", monospace;
+
+  /* Board cell sizing: 3ch wide, clamped 16–24px font, line-height ≈ 1.4 */
+  --cell-ch:   3ch;
+  --cell-lh:   1.4;
+  --grid-fs:   clamp(16px, 5.5vw, 24px);
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: #000;
+  min-height: 100dvh;
+  /* Centre the terminal panel horizontally; flush to top */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ============================================================
+   TERMINAL PANEL
+   ============================================================ */
+.terminal-panel {
+  width: min(80ch, 100%);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-panel);
+  border-left:  1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  box-shadow:
+    inset  1px 0 14px var(--color-glow),
+    inset -1px 0 14px var(--color-glow),
+    0 0 48px rgba(51, 255, 51, 0.04);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--color-fg);
+  line-height: 1.4;
+  position: relative;
+}
+
+/* CRT flicker — motion-safe only */
+@keyframes crt-flicker {
+  0%   { opacity: 1; }
+  91%  { opacity: 1; }
+  92%  { opacity: 0.95; }
+  93%  { opacity: 1; }
+  97%  { opacity: 0.98; }
+  100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .terminal-panel {
+    animation: crt-flicker 9s ease-in-out infinite;
+  }
+}
+
+/* Scanline overlay — motion-safe only */
+@media (prefers-reduced-motion: no-preference) {
+  .terminal-panel::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent       0px,
+      transparent       2px,
+      rgba(0,0,0,0.07)  2px,
+      rgba(0,0,0,0.07)  4px
+    );
+    pointer-events: none;
+    z-index: 9000;
+  }
+}
+
+/* ============================================================
+   HEADER BAR
+   ============================================================ */
+.term-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2ch;
+  height: 2.2em;
+  background: var(--color-dim);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.term-header-left  { color: var(--color-fg);     font-size: 0.85em; letter-spacing: 0.08em; }
+.term-header-right { color: var(--color-chrome);  font-size: 0.8em; }
+
+/* ============================================================
+   CONTENT AREA
+   ============================================================ */
+.term-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5ch 2ch 1ch;
+  overflow-y: auto;
+  /* Prevents the wordmark from causing horizontal scroll on the panel */
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   FOOTER STATUS BAR
+   ============================================================ */
+.term-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2ch;
+  padding: 0 2ch;
+  height: 1.9em;
+  background: var(--color-dim);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+  font-size: 0.78em;
+  color: var(--color-chrome);
+}
+
+.term-footer-node  { letter-spacing: 0.05em; }
+.term-footer-hints { color: var(--color-chrome-lo); }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3 { color: var(--color-fg); font-weight: normal; font-size: 1em; }
+a { color: var(--color-fg); text-decoration: underline; }
+
+/* ============================================================
+   SECTION HEADER / BREADCRUMB
+   ============================================================ */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1ch;
+  color: var(--color-chrome);
+  font-size: 0.85em;
+  margin-bottom: 1.2em;
+  border-bottom: 1px solid var(--color-chrome-lo);
+  padding-bottom: 0.3em;
+}
+
+.section-header .breadcrumb-cur { color: var(--color-fg); }
+
+/* ============================================================
+   ASCII WORDMARK
+   Full GHOSTBBS (6 rows × 68 cols) — fits 80ch, never clips.
+   On narrow viewports term-body clips via overflow-x:hidden,
+   so the wordmark scrolls out of sight rather than breaking layout.
+   ============================================================ */
+.wordmark {
+  /* Use the panel's base font size; scaling via font-size on the panel handles mobile */
+  font-size: 0.75em;
+  line-height: 1.1;
+  color: var(--color-fg);
+  margin-bottom: 1em;
+  /* white-space:pre keeps columns aligned; overflow:visible lets it extend
+     to natural width — the parent term-body clips with overflow-x:hidden  */
+  white-space: pre;
+  overflow: visible;
+  letter-spacing: 0;
+  user-select: none;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+button {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-fg);
+  font-family: var(--font-mono);
+  font-size: 1em;
+  cursor: pointer;
+  padding: 0.2em 0.8em;
+  line-height: 1.4;
+  text-align: left;
+}
+
+button:hover {
+  background: var(--color-dim);
+  border-color: var(--color-fg);
+}
+
+/* Focus ring — never suppressed, ≥ 2px */
+button:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  color: var(--color-chrome);
+  border-color: var(--color-chrome-lo);
+  cursor: default;
+}
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+input[type="text"] {
+  background: var(--color-bg);
+  border: 0;
+  border-bottom: 1px solid var(--color-fg);
+  color: var(--color-fg);
+  font-family: var(--font-mono);
+  font-size: 1em;
+  padding: 0.1em 0.4em;
+  outline: none;
+  width: 22ch;
+}
+
+input[type="text"]:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   INLINE ERROR MESSAGES
+   ============================================================ */
+.error-msg {
+  color: var(--color-warning);
+  margin-top: 0.5em;
+  font-size: 0.95em;
+}
+
+/* ============================================================
+   BOOT SCREEN
+   ============================================================ */
+.boot-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.boot-modem   { margin-bottom: 1.5em; }
+.boot-line    { margin-bottom: 0.1em; min-height: 1.4em; }
+.boot-line.dim { color: var(--color-chrome); }
+.boot-skip    { margin-top: 1.5em; color: var(--color-chrome); font-size: 0.9em; }
+
+/* ============================================================
+   LOGIN SCREEN
+   ============================================================ */
+.login-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-prompt { color: var(--color-chrome); margin-bottom: 1.2em; }
+
+.login-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1ch;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   MAIN MENU
+   ============================================================ */
+.menu-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-handle { color: var(--color-chrome); margin-bottom: 1.5em; font-size: 0.9em; }
+.menu-handle .handle-val { color: var(--color-fg); }
+
+/* Bordered box around menu options */
+.menu-box {
+  border: 1px solid var(--color-border);
+  padding: 0.6em 1.2ch;
+  margin-bottom: 1em;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.menu-box-title {
+  color: var(--color-chrome);
+  font-size: 0.8em;
+  margin-bottom: 0.6em;
+  letter-spacing: 0.08em;
+}
+
+.menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.menu-options button {
+  width: 38ch;
+  max-width: 100%;
+  border-color: var(--color-chrome-lo);
+}
+
+.menu-options button .key { color: var(--color-warning); }
+
+/* ============================================================
+   SUB-VIEWS
+   ============================================================ */
+.subview-header {
+  color: var(--color-chrome);
+  margin-bottom: 1em;
+  border-bottom: 1px solid var(--color-chrome-lo);
+  padding-bottom: 0.3em;
+  font-size: 0.85em;
+  letter-spacing: 0.06em;
+}
+
+.back-row {
+  margin-top: 1.2em;
+  display: flex;
+  align-items: center;
+  gap: 2ch;
+}
+
+.back-hint { color: var(--color-chrome-lo); font-size: 0.85em; }
+
+/* ---- Message board ---- */
+.message-board {
+  overflow-y: auto;
+  max-height: 55vh;
+}
+
+.message {
+  margin-bottom: 1.4em;
+  border-left: 1px solid var(--color-chrome-lo);
+  padding-left: 1.2ch;
+}
+
+.message-meta {
+  color: var(--color-chrome);
+  font-size: 0.85em;
+  margin-bottom: 0.25em;
+}
+
+.message-meta .author { color: var(--color-fg); }
+
+.message-body {
+  color: var(--color-fg);
+  white-space: pre-wrap;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+/* ---- Leaderboard ---- */
+.leaderboard { width: 100%; border-collapse: collapse; }
+
+.leaderboard th {
+  color: var(--color-chrome);
+  text-align: left;
+  padding-right: 2.5ch;
+  padding-bottom: 0.4em;
+  font-weight: normal;
+  border-bottom: 1px solid var(--color-chrome-lo);
+  font-size: 0.85em;
+}
+
+.leaderboard td {
+  padding-right: 2.5ch;
+  padding-top: 0.35em;
+  font-size: 0.9em;
+}
+
+.leaderboard tr.self td { color: var(--color-warning); }
+
+/* ---- About ---- */
+.about-body { color: var(--color-fg); line-height: 1.75; max-width: 56ch; }
+.about-body p { margin-bottom: 0.9em; }
+
+/* ============================================================
+   DOOR GAME — centred vertically in term-body
+   ============================================================ */
+.door-game-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;        /* centre the board block horizontally */
+  justify-content: center;    /* vertical centring */
+  gap: 0;
+  min-height: 0;              /* allow shrink inside flex parent */
+}
+
+.door-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: fit-content;
+  margin-inline: auto;
+}
+
+/* ---- HUD status bar (flush-top of grid frame) ---- */
+.hud-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-bottom: none;          /* merges visually with grid frame */
+  padding: 0.2em 1ch;
+  background: var(--color-dim);
+  font-size: 0.88em;
+  color: var(--color-chrome);
+  /* Match the grid frame width so the bar reads as one terminal status line */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hud-bar .hud-val  { color: var(--color-fg); }
+.hud-bar .hud-sep  { color: var(--color-chrome-lo); margin: 0 0.8ch; }
+.hud-bar .hud-warn { color: var(--color-warning); }
+
+/* ---- Grid frame ---- */
+.grid-frame {
+  /* Exact width: 2 border chars (│) + 7 cells × 2ch = 16ch at the grid font size.
+     We set display:inline-block so it shrink-wraps. */
+  display: inline-block;
+  line-height: 0;              /* remove extra space between spans */
+}
+
+.grid-pre {
+  font-size: var(--grid-fs);   /* 14px */
+  line-height: var(--cell-lh); /* 1.43 → ~20px per row */
+  letter-spacing: 0;
+  color: var(--color-fg);
+  margin: 0;
+  user-select: none;
+  /* Must never wrap */
+  white-space: pre;
+}
+
+/* Each cell: exactly 2ch wide, centred glyph */
+.grid-cell {
+  display: inline-block;
+  width: var(--cell-ch);       /* 2ch */
+  text-align: center;
+}
+
+/* Tile colours */
+.t-wall     { color: var(--color-chrome);   }   /* dim grey */
+.t-floor    { color: var(--color-dim);      }   /* very dark green */
+.t-fragment { color: var(--color-warning);  }   /* amber */
+.t-hatch    { color: #00ddcc;               }   /* cyan */
+.t-player   { color: var(--color-fg);       }   /* phosphor green */
+.t-spectre  { color: var(--color-warning);  }   /* amber */
+
+/* Legend / hint line below grid */
+.grid-hint {
+  font-size: 0.8em;
+  color: var(--color-chrome);
+  margin-top: 0.5em;
+  white-space: nowrap;
+}
+
+.grid-hint .t-player   { color: var(--color-fg); }
+.grid-hint .t-fragment { color: var(--color-warning); }
+.grid-hint .t-hatch    { color: #00ddcc; }
+.grid-hint .t-spectre  { color: var(--color-warning); }
+.grid-hint .t-wall     { color: var(--color-chrome); }
+
+/* ---- D-pad ---- */
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 3.2ch);
+  grid-template-rows: repeat(3, 1.9em);
+  gap: 2px;
+  margin-top: 1em;
+  width: fit-content;
+}
+
+.dpad button {
+  padding: 0;
+  text-align: center;
+  border-color: var(--color-chrome-lo);
+  color: var(--color-chrome);
+  font-size: 0.9em;
+}
+
+.dpad button:hover {
+  color: var(--color-fg);
+  border-color: var(--color-fg);
+  background: var(--color-dim);
+}
+
+.dpad button:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+
+.dpad-up    { grid-column: 2; grid-row: 1; }
+.dpad-left  { grid-column: 1; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+.dpad-down  { grid-column: 2; grid-row: 3; }
+
+/* ============================================================
+   RESULT CARD — BBS goodbye style
+   ============================================================ */
+.result-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Outcome banner */
+.result-banner {
+  border: 1px solid var(--color-border);
+  padding: 0.5em 1.5ch;
+  margin-bottom: 0.6em;
+  font-size: 1em;
+  letter-spacing: 0.1em;
+  width: fit-content;
+}
+
+.result-banner.success { border-color: var(--color-fg);      color: var(--color-fg); }
+.result-banner.failure { border-color: var(--color-warning); color: var(--color-warning); }
+
+/* Stats block */
+.result-stats {
+  font-size: 0.9em;
+  color: var(--color-chrome);
+  line-height: 1.9;
+  margin-bottom: 1.2em;
+  border-left: 2px solid var(--color-chrome-lo);
+  padding-left: 1.5ch;
+}
+
+.result-stats .rk { color: var(--color-chrome);  min-width: 10ch; display: inline-block; }
+.result-stats .rv { color: var(--color-fg); }
+.result-stats .hi { color: var(--color-warning); }
+
+/* Share block */
+.share-block   { margin-bottom: 1.4em; }
+.share-label   { color: var(--color-chrome); font-size: 0.8em; letter-spacing: 0.06em; margin-bottom: 0.4em; }
+
+/* PATH TRACE pre block — 7 glyphs × 7 rows, must never wrap */
+.share-text {
+  /* max-content so the header lines and the 7-glyph rows keep their own widths;
+     white-space:pre guarantees one line per row. */
+  display: inline-block;
+  width: max-content;
+  max-width: 100%;
+  font-size: 15px;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  color: var(--color-fg);
+  white-space: pre;        /* never wrap */
+  overflow: visible;       /* glyphs stay visible even if slightly wider */
+  border: 1px solid var(--color-chrome-lo);
+  padding: 0.4em 0.6ch;
+  background: var(--color-bg);
+  margin-bottom: 0.6em;
+}
+
+/* Textarea fallback for clipboard-unavailable environments */
+.share-textarea {
+  background: var(--color-bg);
+  border: 1px solid var(--color-chrome-lo);
+  color: var(--color-fg);
+  font-family: var(--font-mono);
+  font-size: 1.1em;
+  line-height: 1.0;        /* match share-text */
+  white-space: pre;        /* never wrap the 7-glyph lines */
+  overflow: auto;
+  padding: 0.4em;
+  resize: none;
+  /* Width: 7 glyphs at 1ch each = 7ch + scrollbar room */
+  width: 10ch;
+}
+
+.share-actions { display: flex; gap: 1ch; flex-wrap: wrap; align-items: flex-start; }
+
+.result-scores-label {
+  color: var(--color-chrome);
+  font-size: 0.8em;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4em;
+}
+
+/* Goodbye / NO CARRIER line */
+.result-goodbye {
+  color: var(--color-chrome);
+  font-size: 0.85em;
+  margin-top: auto;
+  padding-top: 1.5em;
+  border-top: 1px solid var(--color-chrome-lo);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+/* Below 640px: drop side borders and glow, reduce padding */
+@media (max-width: 640px) {
+  .terminal-panel {
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+  }
+
+  .term-body {
+    padding: 1ch 1.5ch;
+  }
+
+  .term-header,
+  .term-footer {
+    padding: 0 1.5ch;
+  }
+}
+
+/* Below 480px: reduce base font so grid still fits */
+@media (max-width: 480px) {
+  .terminal-panel { font-size: 12px; }
+}
+
+/* At 360px: smallest legible size, no horizontal scroll */
+@media (max-width: 380px) {
+  .terminal-panel { font-size: 10px; }
+  .menu-options button { width: 100%; }
+  .term-footer-hints { display: none; }
+  /* Wordmark shrinks with font-size but may clip — that's acceptable on 360px */
+}
