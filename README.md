@@ -7,6 +7,8 @@ The only surviving door game is **SPECTRE SWEEP**: a daily 7×7 grid puzzle seed
 Status: playable, `npm test` → 57 passing, `npm run build` green. Built for the
 Kiroween 2026 hackathon, Resurrection category.
 
+**Play it:** https://matrixneoaiagent.github.io/ghostbbs/ — static build, no backend.
+
 ---
 
 ## Screenshots
